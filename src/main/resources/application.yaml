@@ -1,0 +1,61 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: cerullo
+  data:
+    jpa:
+      repositories:
+        # 'bootstrap-mode' valori ammessi:
+        #   - DEFAULT -> I repositories vengono inizializzati all'avvio dell'applicazione
+        #   - DEFERRED -> I repositories vengono inizializzati all'avvio dell'applicazione ma in modo asincrono
+        #   - LAZY -> I repositories vengono inizializzati nel momento in cui vengono richiamati (velocizza l'avvio dell'applicazione ma aumenta i tempi di latenza alla prima chiamata)
+        bootstrap-mode: DEFAULT
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/video_store_exam?createDatabaseIfNotExist=true&autoReconnect=true&useSLL=false&useLegacyDatetimeCode=false #quando installiamo un database di default ha come fusoorario greenwitch ma in Italia 2 ore di differenza. Gli dico di non basarsi su Greenwitch
+    username: root
+    password:
+  jpa:
+    hibernate:
+      # none -   create-drop [db distrutto quando fermo applicazione]    -     update [non modifica ciò che già presente] solo puoi aggiungere tabelle
+      ddl-auto: update
+      #di default è true però metterlo a false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        '[format_sql]': true
+        jdbc:
+        #Gli specifico la Time/zone di riferimento
+        '[time_zone]': Europe/Rome
+        #per vedere le statistiche delle nostre query
+        generate_statistics: false
+    #ogni volta creata una tabella ci mostra la query che verrà eseguita
+    show-sql: true
+  sql:
+    init:
+      # Qualora nel package resources ci sia un file data.sql, le istruzioni ivi contenute potrebbero essere eseguite
+      # 'mode' valori ammessi:
+      #  - never -> non vengono mai eseguite le istruzioni presenti nel file data.sql
+      #  - always -> vengono sempre eseguite le istruzioni presenti nel file data.sql. N.B. Se la propieta spring.jpa.defer-datasource-initialization � a false, le istruzioni vengono eseguite istantaneamente; se impostato a true, le istruzioni sql vengono eseguite dopo l'avvio dell'applicazione (ovvero in maniera differita)
+      #  - embedded -> vengono sempre eseguite le istruzioni presenti nel file data.sql a patto che il database sia di tipo embedded (es. H2, Derby, etc...)
+      mode: never
+
+  jackson:
+    serialization:
+      indent-output: true
+
+logging:
+  level:
+    it:
+      cgmconsulting:
+        cerullo: info
+    org:
+      springframework: info
+      hibernate:
+        stat: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
